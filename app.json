@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "AppLoginFirebase",
-    "slug": "AppLoginFirebase",
+    "name": "AppWordWonder",
+    "slug": "AppWordWonder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo_WordWonder.png",
     "userInterfaceStyle": "light",
+
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splashwordwonder.png",
+      "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -18,13 +18,22 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+      "adaptiveIcon": { 
+        "foregroundImage": "./assets/adactative_icon_ww.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+      "plugins": [
+        [
+          "expo-font",
+          {
+            "fonts": ["./assets/fonts/Poppins/Poppins-Regular.ttf"]
+          }
+        ]
+      ]
+      
   }
 }
