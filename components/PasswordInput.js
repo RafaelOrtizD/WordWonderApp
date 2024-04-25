@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Asegúrate de instalar @expo/vector-icons si aún no lo has hecho
+import { Ionicons } from '@expo/vector-icons';
 
 export default function PasswordInput({ value, onChangeText }) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);

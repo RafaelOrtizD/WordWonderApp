@@ -3,6 +3,7 @@ import { View, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Animated from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Inicio from '../Navegation/Inicio';
 import Favoritos from '../Navegation/Favoritos';
@@ -24,7 +25,7 @@ export default function Navigation() {
               <Ionicons
                 name={focused ? 'home' : 'home-outline'}
                 size={24}
-                color={focused ? '#124699' : '#000000'}
+                color={focused ? '#018ABE' : '#000000'}
               />
             </Animated.View>
           ),
@@ -39,7 +40,7 @@ export default function Navigation() {
               <Ionicons
                 name={focused ? 'heart' : 'heart-outline'}
                 size={24}
-                color={focused ? '#124699' : '#000000'}
+                color={focused ? '#018ABE' : '#000000'}
               />
             </Animated.View>
           ),
@@ -50,9 +51,9 @@ export default function Navigation() {
         component={Camara}
         options={{
           tabBarIcon: ({ focused }) => (
-            <View style={styles.cameraIcon}>
+            <LinearGradient colors={['#2D388A', '#00AEEF']} style={styles.cameraIcon}>
               <FontAwesome5 name="camera" size={24} color="#ffffff" />
-            </View>
+            </LinearGradient>
           ),
         }}
       />
@@ -65,7 +66,7 @@ export default function Navigation() {
               <MaterialIcons
                 name={focused ? 'person' : 'person-outline'}
                 size={24}
-                color={focused ? '#124699' : '#000000'}
+                color={focused ? '#018ABE' : '#000000'}
               />
             </Animated.View>
           ),
@@ -80,7 +81,7 @@ export default function Navigation() {
               <Ionicons
                 name={focused ? 'settings' : 'settings-outline'}
                 size={24}
-                color={focused ? '#124699' : '#000000'}
+                color={focused ? '#018ABE' : '#000000'}
               />
             </Animated.View>
           ),
@@ -109,7 +110,7 @@ const styles = {
   cameraIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#124699',
+    backgroundColor: '#0055CD',
     height: Platform.OS === 'ios' ? 50 : 60,
     width: Platform.OS === 'ios' ? 50 : 60,
     top: Platform.OS === 'ios' ? -10 : -20,

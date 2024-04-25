@@ -17,7 +17,7 @@ const PhotosRoutes = () => (
           style={{
             flex: 1,
             aspectRatio: 1,
-            margin: 3,
+            margin: 5,
           }}
         >
           <Image

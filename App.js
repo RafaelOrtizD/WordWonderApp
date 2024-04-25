@@ -10,6 +10,7 @@ import ButtonGradient from './components/ButtonGradient';
 import PasswordInput from './components/PasswordInput';
 import Navigation from './components/Navigation';
 import EditarPerfil from './components/EditarPerfil'; 
+import RecuperarContra from './components/RecuperarContra';
 import { NavigationContainer } from '@react-navigation/native'; 
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -25,7 +26,6 @@ const firebaseConfig = {
   messagingSenderId: "474197038223",
   appId: "1:474197038223:web:91bdab7928736087484cfa"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage)
@@ -58,8 +58,11 @@ function SvgTop() {
             y2={364.215}
             gradientUnits="userSpaceOnUse"
           >
-            <Stop stopColor="#124699" />
-            <Stop offset={1} stopColor="#554ADD" />
+            <Stop offset={0} stopColor="#0E1D35" />
+            <Stop offset={0.25} stopColor="#02457A" />
+            <Stop offset={0.5} stopColor="#018ABE" />
+            <Stop offset={0.75} stopColor="#97CADB" />
+            <Stop offset={1} stopColor="#D6EBEE" />
           </LinearGradient>
           <LinearGradient
             id="prefix__paint1_linear_103:6"
@@ -69,13 +72,17 @@ function SvgTop() {
             y2={422.041}
             gradientUnits="userSpaceOnUse"
           >
-            <Stop stopColor="#124699" />
-            <Stop offset={1} stopColor="#554ADD" />
+            <Stop offset={0} stopColor="#0E1D35" />
+            <Stop offset={0.25} stopColor="#02457A" />
+            <Stop offset={0.5} stopColor="#018ABE" />
+            <Stop offset={0.75} stopColor="#97CADB" />
+            <Stop offset={1} stopColor="#D6EBEE" />
           </LinearGradient>
         </Defs>
+
       </Svg>
       <Image 
-        source={require('./assets/adactative_icon_ww.png')}
+        source={require('./assets/Logo_WordWonder.png')}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -83,11 +90,9 @@ function SvgTop() {
   )
 }
 
-
-export default function App() {
+function LoginScreen({ navigation, setUser, user }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
   const [isLogin, setIsLogin] = useState(true);
 
   const auth = getAuth(app);
@@ -101,8 +106,13 @@ export default function App() {
 
   const handleAuthentication = async () => {
     // Validaciones
-    if (!email || !password) {
-      alert('Los campos de usuario y contraseña no pueden estar vacíos');
+    if (!email) {
+      alert('El correo no puede estar vacio');
+      return;
+    }
+
+    if (!password) {
+      alert('La contraseña no puede estar vacía');
       return;
     }
 
@@ -122,16 +132,17 @@ export default function App() {
       alert('Evita el uso excesivo de un mismo carácter repetido en la contraseña');
       return;
     }
+
     try {
       if (user) {
         console.log('El usuario cerró sesión exitosamente!');
-        await signOut(auth);
+        await signOut(auth).catch((error) => console.error('Error al cerrar sesión:', error.message));
       } else {
-        if (isLogin) { // Si el usuario está iniciando sesión
-          await signInWithEmailAndPassword(auth, email, password);
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, password).catch((error) => console.error('Error al iniciar sesión:', error.message));
           console.log('El usuario inició sesión correctamente!');
-        } else { // Si el usuario está registrándose
-          await createUserWithEmailAndPassword(auth, email, password);
+        } else { 
+          await createUserWithEmailAndPassword(auth, email, password).catch((error) => console.error('Error al crear usuario:', error.message));
           console.log('Usuario creado con éxito!');
         }
       }
@@ -141,11 +152,15 @@ export default function App() {
   };
 
   const [fontsLoaded] = useFonts({
-    black: require('./assets/fonts/Inter-Black.ttf'),
-    bold: require('./assets/fonts/Inter-Bold.ttf'),
-    medium: require('./assets/fonts/Inter-Medium.ttf'),
-    regular: require('./assets/fonts/Inter-Regular.ttf'),
-    semiBold: require('./assets/fonts/Inter-SemiBold.ttf'),
+    black: require('./assets/fonts/Poppins/Poppins-Black.ttf'),
+    bold: require('./assets/fonts/Poppins/Poppins-Bold.ttf'),
+    medium: require('./assets/fonts/Poppins/Poppins-Medium.ttf'),
+    regular: require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
+    semiBold: require('./assets/fonts/Poppins/Poppins-SemiBold.ttf'),
+    'Questrial': require('./assets/fonts/Questrial-Regular.ttf'),
+    'Genova-Black': require('./assets/fonts/Genova/Genova-Black.otf'),
+    'Genova-Medium': require('./assets/fonts/Genova/Genova-Medium.otf'),
+    'Gatha-SemiBold': require('./assets/fonts/Gatha/ZTGatha-SemiBold.ttf'),
   });
 
   const onLayoutRootView = useCallback(async ()=>{
@@ -157,18 +172,6 @@ export default function App() {
   if(!fontsLoaded){
     return null
   }
-
-  if (user) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={Navigation} />
-          <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-  
 
   return (
     <View style={styles.mainContainer}>
@@ -188,7 +191,9 @@ export default function App() {
           value={password}
           onChangeText={setPassword}
         />
-        <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+        <Text style={styles.forgotPassword} onPress={() => navigation.navigate('RecuperarContra')}>
+          ¿Olvidaste tu contraseña?
+        </Text>
         <ButtonGradient onPress={handleAuthentication} text={isLogin ? 'Iniciar Sesión' : 'Registrarse'}/>
         <Text style={styles.forgotPassword} onPress={() => setIsLogin(!isLogin)}>
           {isLogin ? "¿No tienes una cuenta? Regístrate" : "¿Ya tienes una cuenta? Inicia sesión"}
@@ -199,6 +204,45 @@ export default function App() {
   );
 }
 
+export default function App() {
+  const [user, setUser] = useState(null);
+
+  const auth = getAuth(app);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+  
+    return () => unsubscribe();
+  }, [auth]);
+
+  if (user) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={Navigation} />
+          <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+          <Stack.Screen name="RecuperarContra" component={RecuperarContra} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login">
+          {props => <LoginScreen {...props} setUser={setUser} />}
+        </Stack.Screen>
+        <Stack.Screen name="RecuperarContra">
+          {props => <RecuperarContra {...props} auth={auth} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#f1f1f1',
@@ -207,6 +251,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 100,
   },
   containerSVG: {
     width: width,
@@ -215,34 +260,40 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logo: {
-    position: 'absolute', // Esto posiciona la imagen de logo encima del SVG
-    width: 200, // Ajusta esto al tamaño que desees para tu logo
-    height: 200, // Ajusta esto al tamaño que desees para tu logo
+    position: 'absolute',
+    width: 450,
+    height: 450,
+    bottom: -200,
+    zIndex: 1,
   },
   titulo: {
-    marginTop: 40,
     fontSize: 50,
+    fontFamily: 'Gatha-SemiBold',
     color: '#34434D',
-    fontWeight: 'bold',
+    marginTop: 30,
   },
   subTitle: {
     fontSize: 20,
-    marginBottom: 40,
+    fontFamily: 'Questrial',
+    marginBottom: 20,
     color: 'gray',
   },
   textInput: {
-    padding: 10,
+    padding: 5,
     paddingStart: 30,
+    fontFamily: 'Questrial',
     width: '80%',
     height: 50,
-    marginTop: 20,
+    marginTop: 10,
     borderRadius: 10,
     backgroundColor: '#fff',
   },
   forgotPassword: {
-    fontSize: 14,
+    fontSize: 16,
+    fontFamily: 'Questrial',
     color: 'gray',
-    marginTop: 20
+    marginTop: 30,
+    marginBottom: 30,
   },
   button: {
 
