@@ -11,6 +11,7 @@ import PasswordInput from './components/PasswordInput';
 import Navigation from './components/Navigation';
 import EditarPerfil from './components/EditarPerfil'; 
 import RecuperarContra from './components/RecuperarContra';
+import CustomAlert from './components/CostumAlert';
 import { NavigationContainer } from '@react-navigation/native'; 
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -79,13 +80,11 @@ function SvgTop() {
             <Stop offset={1} stopColor="#D6EBEE" />
           </LinearGradient>
         </Defs>
-
       </Svg>
       <Image 
         source={require('./assets/Logo_WordWonder.png')}
         style={styles.logo}
-        resizeMode="contain"
-      />
+        resizeMode="contain"/>
     </View>
   )
 }
@@ -104,50 +103,71 @@ function LoginScreen({ navigation, setUser, user }) {
     return () => unsubscribe();
   }, [auth]);
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
   const handleAuthentication = async () => {
     // Validaciones
     if (!email) {
-      alert('El correo no puede estar vacio');
+      setAlertMessage('Falta ingresar correo electronico');
+      setAlertVisible(true);
       return;
     }
-
+  
     if (!password) {
-      alert('La contraseña no puede estar vacía');
+      setAlertMessage('La contraseña no puede estar vacía');
+      setAlertVisible(true);
+      return;
+    }
+  
+    if (email.length < 8) {
+      setAlertMessage('El correo electronico debe tener al menos 8 caracteres');
+      setAlertVisible(true);
       return;
     }
 
-    if (email.length < 8 || password.length < 8) {
-      alert('El nombre de usuario y la contraseña deben tener al menos 8 caracteres');
+    if (password.length < 8) {
+      setAlertMessage('La contraseña debe tener al menos 8 caracteres');
+      setAlertVisible(true);
       return;
     }
-
+  
     const passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordValidation.test(password)) {
-      alert('La contraseña debe tener al menos 8 caracteres, contener al menos un carácter especial, una letra mayúscula, una letra minúscula y un número');
+      setAlertMessage('La contraseña debe contener al menos un carácter especial, una letra mayúscula, una letra minúscula y un número');
+      setAlertVisible(true);
       return;
     }
-
-    const repeatedChar = /(.)\1{2,}/;
-    if (repeatedChar.test(password)) {
-      alert('Evita el uso excesivo de un mismo carácter repetido en la contraseña');
-      return;
-    }
-
+  
     try {
       if (user) {
         console.log('El usuario cerró sesión exitosamente!');
-        await signOut(auth).catch((error) => console.error('Error al cerrar sesión:', error.message));
+        await signOut(auth).catch((error) => {
+          setAlertMessage('Error al cerrar sesión');
+          setAlertVisible(true);
+        });
       } else {
         if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, password).catch((error) => console.error('Error al iniciar sesión:', error.message));
+          await signInWithEmailAndPassword(auth, email, password).catch((error) => {
+            setAlertMessage('El correo electrónico o la contraseña son incorrectos');
+            setAlertVisible(true);
+          });
           console.log('El usuario inició sesión correctamente!');
         } else { 
-          await createUserWithEmailAndPassword(auth, email, password).catch((error) => console.error('Error al crear usuario:', error.message));
+          await createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+            setAlertMessage('Error al crear usuario. Verifica tus credenciales');
+            setAlertVisible(true);
+          });
           console.log('Usuario creado con éxito!');
         }
       }
     } catch (error) {
-      console.error('Authentication error:', error.message);
+      setAlertMessage('Error de autenticación');
+      setAlertVisible(true);
     }
   };
 
@@ -175,6 +195,7 @@ function LoginScreen({ navigation, setUser, user }) {
 
   return (
     <View style={styles.mainContainer}>
+      <CustomAlert message={alertMessage} visible={alertVisible} onClose={closeAlert} />
       <View style={styles.containerSVG}>
         <SvgTop/>
       </View>
